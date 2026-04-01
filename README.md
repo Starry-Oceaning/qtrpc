@@ -143,7 +143,10 @@ qDebug() << result.error() << result.errorString() << nRet; //nRet = 30
 支持基础类型与大部分容器及自定义结构体。更多的示例请参考example目录下的例子,里面有相对完整的示例。
  
 ## 注意事项
-虽然接口支持QVariant、QVariantMap、QVariantHash这些类型，但复杂的类型**(即需要使用QVariant::fromValue才能赋值的类)**需要手动注册，详细使用方式请查看example目录下的例子。<span style="color:red">强烈建议提供的接口里面不要使用含QVariant的类型</span>，因为你并不知道对方会传入一个什么样的类型，如果传入的类型你没有注册，将会引发灾难性后果，如果你必须要使用，那么请确定你确实理解了它的用法。
+虽然接口支持 QVariant、QVariantMap、QVariantHash 这些类型，但复杂的类型 **（即需要使用 QVariant::fromValue 才能赋值的类）** 需要手动注册，详细使用方式请查看 example 目录下的例子。
+
+> [!WARNING]
+> **强烈建议提供的接口里面不要使用含 QVariant 的类型**，因为你并不知道对方会传入一个什么样的类型，如果传入的类型你没有注册，将会引发灾难性后果。如果你必须要使用，那么请确定你确实理解了它的用法。
 
 ## 许可证
 
