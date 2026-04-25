@@ -13,7 +13,7 @@ This repository provides only **pre-compiled binary libraries (e.g., `.so`, `.dl
 ## Key Features
 
 - Built with **Qt C++** for easy integration into Qt projects
-- Supports **synchronous RPC calls**
+- Supports **synchronous/asynchronous RPC calls**
 - Supports **service registration and invocation**
 - Efficient **serialization and deserialization mechanism**
 - Supports **multi-threaded concurrent processing**
@@ -35,7 +35,7 @@ This repository provides only **pre-compiled binary libraries (e.g., `.so`, `.dl
 ## Requirements
 
 - C++11 or higher
-- Qt 5.x
+- Qt 5.x, Qt 6.x
 - Supported operating systems:
   - Linux
   - Windows
