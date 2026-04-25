@@ -25,6 +25,7 @@ Widget::Widget(QWidget *parent)
     validator->setRange(0, 65535);
     ui->lineEdit_port->setValidator(validator);
 
+    _cli.setReconnectInterval(3000);
     connect(&_cli, &QRpcClient::signalConnectChanged, this, &Widget::onConnectChanged);
 }
 
@@ -52,62 +53,45 @@ void Widget::on_pushButton_disconn_clicked()
 
 void Widget::on_pushButton_test_clicked()
 {
-    onFun1();
-    onFun2();
-    onFun3();
-    onFun4();
-    onFun5();
-    onFun6();
-    onFun7();
-    onReference1();
-    onReference2();
-
-    onVariant1();
-    onVariant2();
-    onVariant3();
-
-    onComplexVariant();
-}
-
-void Widget::onFun1()
-{
     QRpcCall call;
     call.setModuleName("TestService");
     call.setMethodName("testFun1");
     QRpcResult<void> result = _cli.invokeMethod(call);
-    const QString strRet = QString("void testFun1()\n\tcall: error:%1,errorString:%2")
+    const QString strRet = QString("invokeMethod \"void testFun1()\": call result: error:%1,errorString:%2")
             .arg(result.error()).arg(result.errorString());
 
-    ui->textEdit->append(strRet);
+    ui->textEdit->append(strRet + "\n");
 }
 
-void Widget::onFun2()
+void Widget::on_pushButton_test_2_clicked()
 {
     QRpcCall call;
     call.setModuleName("TestService");
     call.setMethodName("testFun2");
     QRpcResult<void> result = _cli.invokeMethod(call, 666);
-    const QString strRet = QString("void testFun2(int)\n\tcall: error:%1,errorString:%2")
+    const QString strRet = QString("invokeMethod \"void testFun2(int)\": call result: error:%1,errorString:%2")
             .arg(result.error()).arg(result.errorString());
 
-    ui->textEdit->append(strRet);
+    ui->textEdit->append(strRet + "\n");
 }
 
-void Widget::onFun3()
+
+void Widget::on_pushButton_test_3_clicked()
 {
     QRpcCall call;
     call.setModuleName("TestService");
     call.setMethodName("testFun3");
     QRpcResult<int> result = _cli.invokeMethod(call, 10, 100);
-    const QString strRet = QString("int testFun3(int a, int b)\n\tcall: error:%1,errorString:%2---result:%3")
+    const QString strRet = QString("invokeMethod \"int testFun3(int, int)\": call result: error:%1,errorString:%2---return result:%3")
             .arg(result.error())
             .arg(result.errorString())
             .arg(result);
 
-    ui->textEdit->append(strRet);
+    ui->textEdit->append(strRet + "\n");
 }
 
-void Widget::onFun4()
+
+void Widget::on_pushButton_test_4_clicked()
 {
     const QString qString = "test qstring";
     const QByteArray qByteArray = "test qByteArray";
@@ -123,25 +107,19 @@ void Widget::onFun4()
     call.setModuleName("TestService");
     call.setMethodName("testFun4");
     QRpcResult<QChar> result = _cli.invokeMethod(call, qString, qByteArray, dValue, fValue, uIntValue, bValue, cString, dateTime, size);
-    const QString strRet = QString("QChar testFun4("
-                                   "const QString &, "
-                                   "const QByteArray & ,"
-                                   "double,"
-                                   "float,"
-                                   "quint64,"
-                                   "bool,std::string,"
-                                   "QDateTime,"
-                                   "QSize)"
-                                   "\n\t"
-                                   "call: error:%1,errorString:%2---result:%3")
-            .arg(result.error())
-            .arg(result.errorString())
-            .arg(result);
 
-    ui->textEdit->append(strRet);
+
+    const QString invokeMethod = "invokeMethod \"QChar testFun4(const QString &, const QByteArray & ,double,float,quint64,bool,std::string,QDateTime,QSize)\":";
+    ui->textEdit->append(invokeMethod);
+    const QString strRet = QString("\tcall result: error:%1,errorString:%2---return result:%3")
+                            .arg(result.error())
+                            .arg(result.errorString())
+                            .arg(result);
+    ui->textEdit->append(strRet + "\n");
 }
 
-void Widget::onFun5()
+
+void Widget::on_pushButton_test_5_clicked()
 {
     QList<int> list;
     list << 1 <<2 <<3 <<4 << 5 << 6;
@@ -190,7 +168,7 @@ void Widget::onFun5()
     call.setModuleName("TestService");
     call.setMethodName("testFun5");
     QRpcResult<bool> result = _cli.invokeMethod(call, list, vec, set, stack, queue, map, hash, linkeList,mulHash,mulMap);
-    const QString strRet = QString("bool testFun5("
+    const QString invokeMethod = QString("invokeMethod \"bool testFun5("
                                    "const QList<int>, "
                                    "const QVector<QString> ,"
                                    "const QSet<QByteArray>,"
@@ -200,17 +178,19 @@ void Widget::onFun5()
                                    "const QHash<int, QString>,"
                                    "const QLinkedList<double>,"
                                    "const QMultiHash<int, QString>,"
-                                   "const QMultiMap<QByteArray, double>)"
-                                   "\n\t"
-                                   "call: error:%1,errorString:%2---result:%3")
-            .arg(result.error())
-            .arg(result.errorString())
-            .arg(result);
+                                   "const QMultiMap<QByteArray, double>)\":");
+    ui->textEdit->append(invokeMethod);
 
-    ui->textEdit->append(strRet);
+
+    const QString strRet = QString("\tcall result: error:%1,errorString:%2---return result:%3")
+                            .arg(result.error())
+                            .arg(result.errorString())
+                            .arg(result ? "true" : "false");
+    ui->textEdit->append(strRet + "\n");
 }
 
-void Widget::onFun6()
+
+void Widget::on_pushButton_test_6_clicked()
 {
     list<int> list = {1, 2, 3 ,4, 5, 6};
     vector<std::string> vec = { "cstring1" , "cstring2", "cstring3" };
@@ -244,6 +224,18 @@ void Widget::onFun6()
     call.setModuleName("TestService");
     call.setMethodName("testFun6");
     QRpcResult<CustomizeData> result = _cli.invokeMethod(call, list, vec, set, deque, map, mulMap, unMap);
+
+    const QString invokeMethod = QString("invokeMethod \"CustomizeData testFun6("
+                                   "const std::list<int>, "
+                                   "const std::vector<std::string> ,"
+                                   "const std::set<double>,"
+                                   "const std::deque<QSize>,"
+                                   "const std::map<quint64, QVector<int>>,"
+                                   "const std::multimap<int, QString>,"
+                                   "const std::unordered_map<int, QString>)\":");
+    ui->textEdit->append(invokeMethod);
+
+
     CustomizeData cData = result;
     QString rSet;
     for (auto v : cData.sets) {
@@ -255,35 +247,34 @@ void Widget::onFun6()
     {
         rMap += QString("key=%1,value=%2;").arg(it.key()).arg(it.value());
     }
-    const QString strRet = QString("CustomizeData testFun6("
-                                   "const std::list<int>, "
-                                   "const std::vector<std::string> ,"
-                                   "const std::set<double>,"
-                                   "const std::deque<QSize>,"
-                                   "const std::map<quint64, QVector<int>>,"
-                                   "const std::multimap<int, QString>,"
-                                   "const std::unordered_map<int, QString>)"
-                                   "\n\t"
-                                   "call: error:%1,errorString:%2"
-                                   "\n\t"
-                                   "---result: sets: %3, "
-                                   "\n\t"
-                                   "string :%4 "
-                                   "\n\t"
-                                   "mulMap: %5 "
-                                   "\n\t"
-                                   "pair: %6")
-            .arg(result.error())
-            .arg(result.errorString())
-            .arg(rSet)
-            .arg(cData.string)
-            .arg(rMap)
-            .arg(QString("key=%1,value=%2").arg(cData.pair.first.constData()).arg(cData.pair.second.c_str()));
 
-    ui->textEdit->append(strRet);
+    QString strResult;
+    strResult.append("sets:(");
+    strResult.append(rSet);
+    strResult.append(");");
+    strResult.append("string:(");
+    strResult.append(cData.string);
+    strResult.append(");");
+    strResult.append("mulMap:(");
+    strResult.append(rMap);
+    strResult.append(");");
+
+    QString strPar = QString("first=%1,second=%2")
+                    .arg(cData.pair.first.constData())
+                    .arg(cData.pair.second.c_str());
+    strResult.append("pair:(");
+    strResult.append(strPar);
+    strResult.append(")");
+
+    const QString strRet = QString("\tcall result: error:%1,errorString:%2---return result:%3")
+                            .arg(result.error())
+                            .arg(result.errorString())
+                            .arg(strResult);
+    ui->textEdit->append(strRet + "\n");
 }
 
-void Widget::onFun7()
+
+void Widget::on_pushButton_test_7_clicked()
 {
     CustomizeData cData;
 
@@ -304,18 +295,21 @@ void Widget::onFun7()
     call.setMethodName("testFun7");
 
     QRpcResult<QByteArray> result = _cli.invokeMethod(call, cData);
-    QByteArray b = result;
-    const QString strRet = QString("QByteArray testFun7(CustomizeData data)"
-                                   "\n\t"
-                                   "call: error:%1,errorString:%2---result:%3")
-            .arg(result.error())
-            .arg(result.errorString())
-            .arg(b.constData());
 
-    ui->textEdit->append(strRet);
+    const QString invokeMethod = QString("invokeMethod \"QByteArray testFun7(CustomizeData data)\":");
+    ui->textEdit->append(invokeMethod);
+
+
+    QByteArray b = result;
+    const QString strRet = QString("\tcall result: error:%1,errorString:%2---return result:%3")
+                            .arg(result.error())
+                            .arg(result.errorString())
+                            .arg(b.constData());
+    ui->textEdit->append(strRet + "\n");
 }
 
-void Widget::onReference1()
+
+void Widget::on_pushButton_test_8_clicked()
 {
     QRpcCall call;
     call.setModuleName("TestService");
@@ -323,6 +317,11 @@ void Widget::onReference1()
 
     CustomizeData data;
     QRpcResult<bool> result = _cli.invokeMethod(call, qReference(data));
+
+
+    const QString invokeMethod = QString("invokeMethod \"bool testReference(""CustomizeData &)\":");
+    ui->textEdit->append(invokeMethod);
+
 
     QString rSet;
     for (auto v : data.sets) {
@@ -334,29 +333,35 @@ void Widget::onReference1()
     {
         rMap += QString("key=%1,value=%2;").arg(it.key()).arg(it.value());
     }
-    const QString strRet = QString("bool testReference("
-                                   "CustomizeData &)"
-                                   "\n\t"
-                                   "call: error:%1,errorString:%2"
-                                   "\n\t"
-                                   "---result: sets: %3, "
-                                   "\n\t"
-                                   "string :%4 "
-                                   "\n\t"
-                                   "mulMap: %5 "
-                                   "\n\t"
-                                   "pair: %6")
-            .arg(result.error())
-            .arg(result.errorString())
-            .arg(rSet)
-            .arg(data.string)
-            .arg(rMap)
-            .arg(QString("key=%1,value=%2").arg(data.pair.first.constData()).arg(data.pair.second.c_str()));
 
-    ui->textEdit->append(strRet);
+    QString strResult;
+    strResult.append("sets:(");
+    strResult.append(rSet);
+    strResult.append(");");
+    strResult.append("string:(");
+    strResult.append(data.string);
+    strResult.append(");");
+    strResult.append("mulMap:(");
+    strResult.append(rMap);
+    strResult.append(");");
+
+    QString strPar = QString("first=%1,second=%2")
+                    .arg(data.pair.first.constData())
+                    .arg(data.pair.second.c_str());
+    strResult.append("pair:(");
+    strResult.append(strPar);
+    strResult.append(")");
+
+    const QString strRet = QString("\tcall result: error:%1,errorString:%2---return result:%3---reference result:%4")
+                            .arg(result.error())
+                            .arg(result.errorString())
+                            .arg(result ? "true": "false")
+                            .arg(strResult);
+    ui->textEdit->append(strRet + "\n");
 }
 
-void Widget::onReference2()
+
+void Widget::on_pushButton_test_9_clicked()
 {
     QRpcCall call;
     call.setModuleName("TestService");
@@ -365,34 +370,40 @@ void Widget::onReference2()
     QHash<int, QString> outHash;
     QRpcResult<bool> result = _cli.invokeMethod(call, QString("input"), qReference(outHash));
 
-    const QString strRet = QString("bool testReference2(const QString &, QHash<int, QString>&)"
-                                   "\n\t"
-                                   "call: error:%1,errorString:%2---result:%3")
-            .arg(result.error())
-            .arg(result.errorString())
-            .arg(toQString(outHash));
+    const QString invokeMethod = QString("invokeMethod \"bool testReference2(const QString &, QHash<int, QString>&)\":");
+    ui->textEdit->append(invokeMethod);
 
-    ui->textEdit->append(strRet);
 
+    QString hashString;
+    QDebug debug(&hashString);
+    debug << outHash;
+    const QString strRet = QString("\tcall result: error:%1,errorString:%2---return result:%3---reference result:%4")
+                            .arg(result.error())
+                            .arg(result.errorString())
+                            .arg(result ? "true" : "false")
+                            .arg(hashString);
+    ui->textEdit->append(strRet + "\n");
 }
 
-void Widget::onVariant1()
+
+void Widget::on_pushButton_test_10_clicked()
 {
     QRpcCall call;
     call.setModuleName("TestServiceTwo");
     call.setMethodName("testVariant1");
     QRpcResult<bool> result = _cli.invokeMethod(call, QVariant("123"));
-    const QString strRet = QString("bool testVariant1(QVariant)"
-                                   "\n\t"
-                                   "call: error:%1,errorString:%2---result:%3")
-            .arg(result.error())
-            .arg(result.errorString())
-            .arg(bool(result));
+    const QString invokeMethod = QString("invokeMethod \"bool testVariant1(QVariant)\":");
+    ui->textEdit->append(invokeMethod);
 
-    ui->textEdit->append(strRet);
+    const QString strRet = QString("\tcall result: error:%1,errorString:%2---return result:%3")
+                            .arg(result.error())
+                            .arg(result.errorString())
+                            .arg(result ? "true" : "false");
+    ui->textEdit->append(strRet + "\n");
 }
 
-void Widget::onVariant2()
+
+void Widget::on_pushButton_test_11_clicked()
 {
     QRpcCall call;
     call.setModuleName("TestServiceTwo");
@@ -404,17 +415,18 @@ void Widget::onVariant2()
     map.insert("3", "string3");
     map.insert("4", QByteArray("4"));
     QRpcResult<bool> result = _cli.invokeMethod(call, map);
-    const QString strRet = QString("bool testVariant1(QVariantMap)"
-                                   "\n\t"
-                                   "call: error:%1,errorString:%2---result:%3")
-            .arg(result.error())
-            .arg(result.errorString())
-            .arg(bool(result));
+    const QString invokeMethod = QString("invokeMethod \"bool testVariant1(QVariantMap)\":");
+    ui->textEdit->append(invokeMethod);
 
-    ui->textEdit->append(strRet);
+    const QString strRet = QString("\tcall result: error:%1,errorString:%2---return result:%3")
+                            .arg(result.error())
+                            .arg(result.errorString())
+                            .arg(result ? "true" : "false");
+    ui->textEdit->append(strRet + "\n");
 }
 
-void Widget::onVariant3()
+
+void Widget::on_pushButton_test_12_clicked()
 {
     QRpcCall call;
     call.setModuleName("TestServiceTwo");
@@ -426,35 +438,66 @@ void Widget::onVariant3()
     hash.insert("3", "string3");
     hash.insert("4", QByteArray("4"));
     QRpcResult<bool> result = _cli.invokeMethod(call, hash);
-    const QString strRet = QString("bool testVariant3(QVariantHash)"
-                                   "\n\t"
-                                   "call: error:%1,errorString:%2---result:%3")
-            .arg(result.error())
-            .arg(result.errorString())
-            .arg(bool(result));
+    const QString invokeMethod = QString("invokeMethod \"bool testVariant3(QVariantHash)\":");
+    ui->textEdit->append(invokeMethod);
 
-    ui->textEdit->append(strRet);
+    const QString strRet = QString("\tcall result: error:%1,errorString:%2---return result:%3")
+                            .arg(result.error())
+                            .arg(result.errorString())
+                            .arg(result ? "true" : "false");
+    ui->textEdit->append(strRet + "\n");
 }
 
-void Widget::onComplexVariant()
+
+void Widget::on_pushButton_test_13_clicked()
 {
     QRpcCall call;
     call.setModuleName("TestServiceTwo");
     call.setMethodName("testComplexVariant");
 
-    // 使用QVariant存放一个复杂的类型，需要手动注册该类型，同时服务器上也必须要手动注册该类型
-    qRpcRegisterMetaType<QHash<QByteArray, QByteArray>>();
+
     QHash<QByteArray, QByteArray> hash;
     hash["123"] = QByteArray("321");
 
+    // 使用QVariant存放一个复杂的类型(需要使用QVariant::fromValue赋值的类型)，需要手动注册该类型，同时服务器上也必须要手动注册该类型
+    qRpcRegisterMetaType<QHash<QByteArray, QByteArray>>();
     QVariant v = QVariant::fromValue(hash);
-    QRpcResult<bool> result = _cli.invokeMethod(call, v);
-    const QString strRet = QString("bool testComplexVariant(QVariant)"
-                                   "\n\t"
-                                   "call: error:%1,errorString:%2---result:%3")
-            .arg(result.error())
-            .arg(result.errorString())
-            .arg(bool(result));
 
-    ui->textEdit->append(strRet);
+
+    QRpcResult<bool> result = _cli.invokeMethod(call, v);
+    const QString invokeMethod = QString("invokeMethod \"bool testComplexVariant(QVariant)\":");
+    ui->textEdit->append(invokeMethod);
+
+    const QString strRet = QString("\tcall result: error:%1,errorString:%2---return result:%3")
+                            .arg(result.error())
+                            .arg(result.errorString())
+                            .arg(result ? "true" : "false");
+    ui->textEdit->append(strRet + "\n");
 }
+
+
+void Widget::on_pushButton_clicked()
+{
+    QRpcCall call;
+    call.setModuleName("TestService");
+    call.setMethodName("testFun3");
+    call.setInvokeMode(QRpcCall::ASYNC);
+    call.setTimeout(3000);
+
+
+    QRpcResult<int> result = _cli.invokeMethod(call, 100, 200);
+
+    QRpcResultCallWatcher *watcher = new QRpcResultCallWatcher(result);
+    connect(watcher, &QRpcResultCallWatcher::invokeFinished, this, [this, result, watcher]{
+
+        const QString strRet = QString("invokeMethod \"int testFun3(int, int)\": call result: error:%1,errorString:%2---return result:%3")
+                .arg(result.error())
+                .arg(result.errorString())
+                .arg(result);
+
+        ui->textEdit->append(strRet + "\n");
+
+        watcher->deleteLater();
+    });
+}
+

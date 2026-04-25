@@ -63,22 +63,32 @@ private slots:
 
     void on_pushButton_test_clicked();
 
-private:
-    void onFun1();
-    void onFun2();
-    void onFun3();
-    void onFun4();
-    void onFun5();
-    void onFun6();
-    void onFun7();
-    void onReference1();
-    void onReference2();
+    void on_pushButton_test_2_clicked();
 
-    void onVariant1();
-    void onVariant2();
-    void onVariant3();
+    void on_pushButton_test_3_clicked();
 
-    void onComplexVariant();
+    void on_pushButton_test_4_clicked();
+
+    void on_pushButton_test_5_clicked();
+
+    void on_pushButton_test_6_clicked();
+
+    void on_pushButton_test_7_clicked();
+
+    void on_pushButton_test_8_clicked();
+
+    void on_pushButton_test_9_clicked();
+
+    void on_pushButton_test_10_clicked();
+
+    void on_pushButton_test_11_clicked();
+
+    void on_pushButton_test_12_clicked();
+
+    void on_pushButton_test_13_clicked();
+
+    void on_pushButton_clicked();
+
 private:
     Ui::Widget *ui;
 

@@ -133,8 +133,8 @@ CustomizeData TestService::testFun6(const std::list<int> list,
     data.mulMap.insert(11,21.2);
     data.mulMap.insert(22,30.2);
     data.mulMap.insert(22,31.2);
-    data.pair.first = "bytearray";
-    data.pair.second = "std::string";
+    data.pair.first = "pair first";
+    data.pair.second = "pair second";
     return  data;
 }
 
@@ -200,7 +200,15 @@ bool TestServiceTwo::testVariant3(QVariantHash v)
 bool TestServiceTwo::testComplexVariant(QVariant v)
 {
     qDebug() << "invoke:" << __FUNCTION__ << this->channelId() << this->requestUrl();
-    qDebug() << "v:" << v;
+
+
+    QHash<QByteArray, QByteArray> hash = v.value<QHash<QByteArray, QByteArray>>();
+    qDebug() << "v:";
+    QHash<QByteArray, QByteArray>::const_iterator i = hash.constBegin();
+    while (i != hash.constEnd()) {
+        qDebug() << "  " << "key:" << i.key() <<  "value:" << i.value();
+        ++i;
+    }
     return true;
 }
 
