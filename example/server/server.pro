@@ -1,5 +1,6 @@
 QT -= gui
 QT += rpc
+greaterThan(QT_MAJOR_VERSION, 5): QT += core5compat
 
 CONFIG += c++11 console
 CONFIG -= app_bundle
